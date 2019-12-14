@@ -8,6 +8,7 @@ pipeline {
   stages {
      stage('Lint HTML') {
       steps {
+        sh 'make'
         sh 'tidy -q -e *.html'
       }
     }
