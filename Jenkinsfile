@@ -5,12 +5,12 @@ pipeline {
 
   agent any
 
-  // agent {
-  //       dockerfile {
-  //           filename 'Dockerfile'
-  //       }
-  // }
   stages {
+     stage('Lint HTML') {
+      steps {
+        sh 'tidy -q -e *.html'
+      }
+    }
     stage('Build Docker Image') {
    steps {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'abalhussaini20', passwordVariable: 'Abeer@12345']]){
@@ -20,11 +20,11 @@ pipeline {
     }
    }
   }
-    stage('Test') {
-      steps {
-        echo 'TODO: add tests'
-      }
-    }
+    // stage('Test') {
+    //   steps {
+    //     echo 'TODO: add tests'
+    //   }
+    // }
     stage('Image Release') {
       when {
         expression { env.BRANCH_NAME == 'master' }
