@@ -8,8 +8,6 @@ pipeline {
   stages {
      stage('Lint HTML') {
       steps {
-        sh 'apt install python-pip'
-        sh 'pip install --upgrade pip'
         sh 'pip install -r requirements.txt'
         sh 'tidy -q -e *.html'
       }
