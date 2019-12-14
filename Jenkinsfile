@@ -8,7 +8,6 @@ pipeline {
   stages {
      stage('Lint HTML') {
       steps {
-        sh 'pip install -r requirements.txt --user'
         sh 'tidy -q -e *.html'
       }
     }
