@@ -20,11 +20,6 @@ pipeline {
     }
    }
   }
-    // stage('Test') {
-    //   steps {
-    //     echo 'TODO: add tests'
-    //   }
-    // }
     stage('Image Release') {
       when {
         expression { env.BRANCH_NAME == 'master' }
@@ -40,51 +35,50 @@ pipeline {
         }
       }
     }
-    // stage('Staging Deployment') {
-    //   when {
-    //     expression { env.BRANCH_NAME == 'master' }
-    //   }
+        stage('Set Kubectl Context to Cluster') {
+            steps{
+                sh 'kubectl config use-context arn:aws:eks:us-west-2:532830860357:cluster/capstone'
+            }
+        }
 
-    //   environment {
-    //     RELEASE_NAME = 'helloworld-staging'
-    //     SERVER_HOST = 'staging.helloworld.k8s.prydoni.us'
-    //   }
+        stage('Create Staging Controller') {
+            steps{
+                withAWS(region:'us-west-2',credentials:'capstone')  {
+                    sh 'kubectl apply -f ./staging-controller.json'
 
-    //   steps {
-    //     sh '''
-    //       . ./helm/helm-init.sh
-    //       helm upgrade --install --namespace staging $RELEASE_NAME ./helm/helloworld --set image.tag=$BUILD_ID,ingress.host=$SERVER_HOST
-    //     '''
-    //   }
-    // }
-    // stage('Deploy to Production?') {
-    //   when {
-    //     expression { env.BRANCH_NAME == 'master' }
-    //   }
+                }
+            }
+        }
+        stage('Rollout Staging Changes') {
+            steps{
+                withAWS(region:'us-west-2',credentials:'capstone')  {
+                    sh 'kubectl rolling-update staging --image=abeeralhussaini20/helloworld:latest'
+                }
+            }
+        }
+        stage('Create Staging service') {
+            steps{
+                withAWS(region:'us-west-2',credentials:'capstone')  {
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
+                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                        sh 'kubectl apply -f ./staging-service.json'
+                        sh 'kubectl get pods'
+                        sh 'kubectl describe service staginglb'
+                    }
+                }
+            }
+        }
+        stage('Deploy to Production?') {
+              when {
+                expression { env.BRANCH_NAME != 'master' }
+              }
 
-    //   steps {
-    //     // Prevent any older builds from deploying to production
-    //     milestone(1)
-    //     input 'Deploy to Production?'
-    //     milestone(2)
-    //   }
-    // }
-    // stage('Production Deployment') {
-    //   when {
-    //     expression { env.BRANCH_NAME == 'master' }
-    //   }
-
-    //   environment {
-    //     RELEASE_NAME = 'helloworld-production'
-    //     SERVER_HOST = 'helloworld.k8s.prydoni.us'
-    //   }
-
-    //   steps {
-    //     sh '''
-    //       . ./helm/helm-init.sh
-    //       helm upgrade --install --namespace production $RELEASE_NAME ./helm/helloworld --set image.tag=$BUILD_ID,ingress.host=$SERVER_HOST
-    //     '''
-    //   }
-    // }
+              steps {
+                // Prevent any older builds from deploying to production
+                milestone(1)
+                input 'Deploy to Production?'
+                milestone(2)
+              }
+        }
   }
 }

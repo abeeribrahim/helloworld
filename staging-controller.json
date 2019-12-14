@@ -1,0 +1,37 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "staging",
+    "labels": {
+      "app": "helloworld"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "app": "helloworld"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "helloworld"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "helloworld",
+            "image": "abeeralhussaini20/helloworld:latest",
+            "ports": [
+              {
+                "name": "http-server",
+                "containerPort": 80
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
