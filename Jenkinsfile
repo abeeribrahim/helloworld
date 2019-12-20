@@ -35,13 +35,13 @@ pipeline {
         }
       }
     }
-        // stage('Set Kubectl Context to Cluster') {
-        //     steps{
-        //         withAWS(region:'us-west-2',credentials:'capstoneUser')  {
-        //         sh 'aws eks --region us-west-2 update-kubeconfig --name capstone'
-        //         }
-        //     }
-        // }
+        stage('Set Kubectl Context to Cluster') {
+            steps{
+                withAWS(region:'us-west-2',credentials:'capstoneUser')  {
+                sh 'aws eks --region us-west-2 update-kubeconfig --name capstone'
+                }
+            }
+        }
         stage('Create Staging Controller') {
             steps{
                 withAWS(region:'us-west-2',credentials:'capstoneUser')  {
