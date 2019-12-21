@@ -45,6 +45,7 @@ pipeline {
         stage('Create Staging Controller') {
             steps{
                 withAWS(region:'us-west-2',credentials:'capstoneUser')  {
+                    sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
                     sh 'kubectl apply -f ./deployment.yml'
 
                 }
