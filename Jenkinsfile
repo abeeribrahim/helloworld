@@ -44,23 +44,23 @@ pipeline {
         // }
         stage('Create Staging Controller') {
             steps{
-                withAWS(region:'us-west-2',credentials:'capstoneUser')  {
+                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
                     sh 'kubectl apply -f ./deployment.yml'
-
+s
                 }
             }
         }
         stage('Rollout Staging Changes') {
             steps{
-                withAWS(region:'us-west-2',credentials:'capstoneUser')  {
+                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh 'kubectl rolling-update staging --image=abeeralhussaini20/helloworld:latest'
                 }
             }
         }
         stage('Create Staging service') {
             steps{
-                withAWS(region:'us-west-2',credentials:'capstoneUser')  {
+                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
                         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                         sh 'kubectl apply -f ./staging-service.json'
