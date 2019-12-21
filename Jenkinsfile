@@ -35,29 +35,23 @@ pipeline {
         }
       }
     }
-        // stage('Set Kubectl Context to Cluster') {
-        //     steps{
-        //         withAWS(region:'us-west-2',credentials:'capstoneUser')  {
-        //         sh 'kubectl config use-context arn:aws:eks:us-west-2:532830860357:cluster/capstone'
-        //         }
-        //     }
-        // } 
-        stage('Create Staging Controller') {
+
+    stage('Create Staging Controller') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-                    sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
+                    sh "aws eks --region us-west-2 update-kubeconfig --name capstone --profile my-profile"
                     sh 'kubectl apply -f ./deployment.yml'
                 }
             }
         }
-        stage('Rollout Staging Changes') {
+    stage('Rollout Staging Changes') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh 'kubectl rolling-update staging --image=abeeralhussaini20/helloworld:latest'
                 }
             }
         }
-        stage('Create Staging service') {
+    stage('Create Staging service') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
@@ -69,7 +63,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Production?') {
+    stage('Deploy to Production?') {
               when {
                 expression { env.BRANCH_NAME != 'master' }
               }
