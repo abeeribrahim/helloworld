@@ -40,10 +40,17 @@ pipeline {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
+                }
+            }
+        }
+        stage('Create Staging Controller 2') {
+            steps{
+                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh 'kubectl apply -f ./deployment.yml'
                 }
             }
         }
+
     stage('Rollout Staging Changes') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
@@ -63,7 +70,7 @@ pipeline {
                 }
             }
         }
-    stage('Deploy to Production?') {
+        stage('Deploy to Production?') {
               when {
                 expression { env.BRANCH_NAME != 'master' }
               }
