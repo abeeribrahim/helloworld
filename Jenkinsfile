@@ -48,7 +48,7 @@ pipeline {
                stage('Create Staging Controller 2') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-                    sh 'kubectl config use-context arn:aws:eks:us-east-1:546547842218:cluster/capstone'
+                    sh 'kubectl config use-context arn:aws:eks:us-west-2:546547842218:cluster/capstone'
                 }
             }
         }
