@@ -2,7 +2,7 @@
   "kind":"Service",
   "apiVersion":"v1",
   "metadata":{
-    "name":"staginglb",
+    "name":"helloworld",
     "annotations":{
       "service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags" : "Capstone Staging LB",
       "service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold" : "5",
@@ -12,7 +12,7 @@
 
     },
     "labels":{
-      "app":"staginglb"
+      "app":"helloworld"
     }
   },
   "spec":{
