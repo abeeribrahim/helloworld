@@ -1,6 +1,7 @@
 pipeline {
   environment {
-    IMAGE_NAME = 'abeeralhussaini20/helloworld'
+    IMAGE_NAME = 'abeeralhussaini20/helloworld:latest'
+    dockerhubCredentials = 'dockerhub'
   }
 
   agent any
@@ -11,30 +12,40 @@ pipeline {
         sh 'tidy -q -e *.html'
       }
     }
-    stage('Build Docker Image') {
-   steps {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub']]){
-     sh '''
-      docker build -t $IMAGE_NAME:$BUILD_ID .
-     '''
-    }
-   }
-  }
-    stage('Image Release') {
-      when {
-        expression { env.BRANCH_NAME == 'master' }
-      }
-
-      steps {
-        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
-          usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-          sh '''
-            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker push $IMAGE_NAME:$BUILD_ID
-          '''
+    stage('Build and Push to dockerhub') {
+            steps {
+                script {
+                    dockerImage = docker.build(IMAGE_NAME)
+                    docker.withRegistry('', dockerhubCredentials) {
+                        dockerImage.push()
+                    }
+                }
+            }
         }
-      }
-    }
+//     stage('Build Docker Image') {
+//    steps {
+//     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub']]){
+//      sh '''
+//       docker build -t $IMAGE_NAME:$BUILD_ID .
+//      '''
+//     }
+//    }
+//   }
+    // stage('Image Release') {
+    //   when {
+    //     expression { env.BRANCH_NAME == 'master' }
+    //   }
+
+    //   steps {
+    //     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
+    //       usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+    //       sh '''
+    //         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    //         docker push $IMAGE_NAME:$BUILD_ID
+    //       '''
+    //     }
+    //   }
+    // }
 
     stage('Deployment stage') {
             steps{
