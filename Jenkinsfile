@@ -36,10 +36,11 @@ pipeline {
       }
     }
 
-    stage('Create Staging Controller') {
+    stage('Deployment stage') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
                     sh "aws eks --region us-west-2 update-kubeconfig --name capstone"
+                    sh 'kubectl apply -f ./deployment.yml'
                 }
             }
         }
@@ -53,13 +54,13 @@ pipeline {
         //     }
         // }
 
-        stage('Create Staging Controller 3') {
-            steps{
-                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-                    sh 'kubectl apply -f ./deployment.yml'
-                }
-            }
-        }
+        // stage('Create Staging Controller 3') {
+        //     steps{
+        //         withAWS(region:'us-west-2',credentials:'aws-credentials')  {
+        //             sh 'kubectl apply -f ./deployment.yml'
+        //         }
+        //     }
+        // }
 
     stage('Rollout Staging Changes') {
             steps{
