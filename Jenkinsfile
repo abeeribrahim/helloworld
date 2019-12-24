@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Build Docker Image') {
    steps {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'abalhussaini20', passwordVariable: 'Abeer@12345']]){
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub']]){
      sh '''
       docker build -t $IMAGE_NAME:$BUILD_ID .
      '''
@@ -45,30 +45,6 @@ pipeline {
             }
         }
 
-        
-        //        stage('Create Staging Controller 2') {
-        //     steps{
-        //         withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-        //             sh 'kubectl config use-context arn:aws:eks:us-west-2:546547842218:cluster/capstone'
-        //         }
-        //     }
-        // }
-
-        // stage('Create Staging Controller 3') {
-        //     steps{
-        //         withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-        //             sh 'kubectl apply -f ./deployment.yml'
-        //         }
-        //     }
-        // }
-
-    stage('Rollout Staging Changes') {
-            steps{
-                withAWS(region:'us-west-2',credentials:'aws-credentials')  {
-                    sh 'kubectl rolling-update staging --image=abeeralhussaini20/helloworld:latest'
-                }
-            }
-        }
     stage('Create Staging service') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {
@@ -80,18 +56,6 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('Deploy to Production?') {
-              when {
-                expression { env.BRANCH_NAME != 'master' }
-              }
-
-              steps {
-                // Prevent any older builds from deploying to production
-                milestone(1)
-                input 'Deploy to Production?'
-                milestone(2)
-              }
         }
   }
 }

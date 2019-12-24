@@ -31,5 +31,12 @@ spec:
      protocol: TCP
      port: 80
      nodePort: 32080
+ strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  progressDeadlineSeconds: 1200
+  minReadySeconds: 60
  selector:
    app: helloworld
