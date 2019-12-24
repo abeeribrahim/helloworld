@@ -22,15 +22,6 @@ pipeline {
                 }
             }
         }
-//     stage('Build Docker Image') {
-//    steps {
-//     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub']]){
-//      sh '''
-//       docker build -t $IMAGE_NAME:$BUILD_ID .
-//      '''
-//     }
-//    }
-//   }
     stage('Deployment stage') {
             steps{
                 withAWS(region:'us-west-2',credentials:'aws-credentials')  {

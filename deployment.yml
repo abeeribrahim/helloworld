@@ -22,3 +22,17 @@ spec:
         image: abeeralhussaini20/helloworld:latest
         ports:
         - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: helloworld
+spec:
+  type: LoadBalancer
+  selector:
+    app: helloworld
+  ports:
+    - name: http
+      protocol: TCP
+      # ELB's port
+      port: 80
