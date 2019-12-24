@@ -7,6 +7,11 @@ spec:
     matchLabels:
       app: helloworld
   replicas: 1 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template: 
     metadata:
       labels:
@@ -17,8 +22,3 @@ spec:
         image: abeeralhussaini20/helloworld:latest
         ports:
         - containerPort: 80
-    strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
