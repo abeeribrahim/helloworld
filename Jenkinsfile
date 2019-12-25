@@ -38,7 +38,7 @@ pipeline {
                         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                         sh 'kubectl apply -f ./staging-service.json'
                         sh 'kubectl get pods'
-                        sh 'kubectl describe service staginglb'
+                        sh 'kubectl describe service helloworld'
                     }
                 }
             }
