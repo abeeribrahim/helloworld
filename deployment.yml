@@ -6,16 +6,16 @@ spec:
   selector:
     matchLabels:
       app: helloworld
-  replicas: 2 
+  replicas: 1 
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 2
+      maxSurge: 1
       maxUnavailable: 0
   template: 
     metadata:
       labels:
-        app: staginglb
+        app: helloworld
     spec:
       containers:
       - name: helloworld
@@ -30,9 +30,9 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: staginglb
+    app: helloworld
   ports:
     - name: http
       protocol: TCP
-      #ELB's port
+      # ELB's port
       port: 80
